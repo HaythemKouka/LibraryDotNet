@@ -2,7 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\Data",
-    "\\Models"
+    "\\Models",
+    "\\Pages",
+    "\\Pages\\Livres"
   ],
   "SelectedNode": "\\Program.cs",
   "PreviewInSolutionExplorer": false

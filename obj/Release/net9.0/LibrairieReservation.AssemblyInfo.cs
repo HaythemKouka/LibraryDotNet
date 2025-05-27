@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LibrairieReservation")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+501c8f86f2ca24ba1e33688ed4ddc056e6e11d1f")]
 [assembly: System.Reflection.AssemblyProductAttribute("LibrairieReservation")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LibrairieReservation")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

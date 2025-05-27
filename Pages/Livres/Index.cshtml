@@ -1,0 +1,31 @@
+@page
+@model LibrairieReservation.Pages.Livres.IndexModel
+
+<h1>Gestion des Livres</h1>
+
+<a asp-page="Create">Ajouter un nouveau livre</a>
+
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Titre</th>
+            <th>Auteur</th>
+            <th>Stock</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var livre in Model.Livres)
+    {
+        <tr>
+            <td>@livre.Titre</td>
+            <td>@livre.Auteur</td>
+            <td>@livre.Stock</td>
+            <td>
+                <a asp-page="Edit" asp-route-id="@livre.Id">Modifier</a> |
+                <a asp-page="Delete" asp-route-id="@livre.Id">Supprimer</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

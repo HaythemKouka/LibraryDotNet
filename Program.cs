@@ -1,23 +1,39 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Microsoft.EntityFrameworkCore;
+using LibrairieReservation.Models;
+using LibrairieReservation.Data;
+var builder = WebApplication.CreateBuilder(args);
 
-// Ne pas ajouter Swagger ici
-// builder.Services.AddEndpointsApiExplorer();
-// builder.Services.AddSwaggerGen();
+// Ajout du DbContext
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Ajout des services Razor Pages (obligatoire si tu utilises Razor Pages)
+builder.Services.AddRazorPages();
+
+// Si tu utilises MVC avec contrôleurs + vues, tu peux aussi garder
+// builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Ne pas utiliser Swagger dans le pipeline
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseSwagger();
-//     app.UseSwaggerUI();
-// }
+// Pipeline HTTP
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
 
-app.UseHttpsRedirection();
+app.UseStaticFiles();
 
-// Ajoute tes routes ici, par exemple :
-app.MapGet("/", () => "Hello World!");
+app.UseRouting();
 
-// Autres routes (livres, réservations, utilisateurs, etc.)
+app.UseAuthorization();
+
+// Map Razor Pages
+app.MapRazorPages();
+
+// Map MVC controllers (optionnel si tu utilises MVC)
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
