@@ -1,5 +1,14 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿
+using LibrairieReservation.Models;
+using Microsoft.EntityFrameworkCore;
 
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<LibraryContext>(options =>
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection")
+    )
+);
 // Ne pas ajouter Swagger ici
 // builder.Services.AddEndpointsApiExplorer();
 // builder.Services.AddSwaggerGen();
