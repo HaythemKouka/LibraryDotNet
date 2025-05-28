@@ -1,177 +1,329 @@
 ﻿@page
-@model LibrairieReservation.Pages.Livres.IndexModel
+@model LibrairieReservation.Pages.Livre.IndexModel
+@using LibrairieReservation.Models
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
+@section Head {
+    <style>
+        /* General styling for the page */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        h2 {
+            color: #343a40;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        /* Button styling */
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+
+        /* Table styling */
+        .table {
+            margin-top: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+            background-color: #ffffff;
+        }
+
+            .table thead th {
+                background-color: #e9ecef;
+                color: #495057;
+                font-weight: bold;
+                border-bottom: 2px solid #dee2e6;
+            }
+
+            .table tbody tr:hover {
+                background-color: #f1f1f1;
+            }
+
+            .table td, .table th {
+                vertical-align: middle;
+            }
+
+        /* Modal styling */
+        .modal-content {
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            background-color: #007bff;
+            color: white;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .modal-title {
+            font-weight: 500;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #e9ecef;
+            padding: 15px;
+            justify-content: flex-end;
+        }
+
+        /* Alert messages */
+        .alert {
+            margin-top: 15px;
+            border-radius: 5px;
+        }
+    </style>
+}
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+ 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<h2>Gestion des Livres</h2>
-
-@if (!string.IsNullOrEmpty(Model.MessageErreur))
-{
-    <div class="alert alert-danger">@Model.MessageErreur</div>
-}
-@if (!string.IsNullOrEmpty(Model.MessageSucces))
-{
-    <div class="alert alert-success">@Model.MessageSucces</div>
-}
-
-<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#livreModal" onclick="openModal()">Ajouter un livre</button>
-
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Titre</th>
-            <th>Auteur</th>
-            <th>ISBN</th>
-            <th>Maison d'édition</th>
-            <th>Année de publication</th>
-            <th>Nombre de pages</th>
-            <th>Langue</th>
-            <th>Stock</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var livre in Model.Livres)
-        {
-            <tr>
-                <td>@livre.Titre</td>
-                <td>@livre.Auteur.Nom</td>
-                <td>@(string.IsNullOrEmpty(livre.ISBN) ? "-" : livre.ISBN)</td>
-                <td>@(string.IsNullOrEmpty(livre.MaisonEdition) ? "-" : livre.MaisonEdition)</td>
-                <td>@livre.AnneePublication</td>
-                <td>@livre.NombrePages</td>
-                <td>@(string.IsNullOrEmpty(livre.Langue) ? "-" : livre.Langue)</td>
-                <td>@livre.Stock</td>
-                <td>
-                    <button class="btn btn-sm btn-info"
-                            onclick="editLivre(@livre.Id,
-                                                '@livre.Titre.Replace("'", "\\'")',
-                                                @livre.AuteurId,
-                                                '@(livre.ISBN?.Replace("'", "\\'") ?? "")',
-                                                '@(livre.MaisonEdition?.Replace("'", "\\'") ?? "")',
-                                                @livre.AnneePublication,
-                                                @livre.NombrePages,
-                                                '@(livre.Langue?.Replace("'", "\\'") ?? "")',
-                                                @livre.Stock)">
-                        Modifier
-                    </button>
-                    <form method="post" asp-page-handler="Delete" asp-route-id="@livre.Id" style="display:inline"
-                          onsubmit="return confirm('Voulez-vous vraiment supprimer ce livre ?');">
-                        <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<div class="modal fade" id="livreModal" tabindex="-1" aria-labelledby="livreModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <form method="post" asp-page-handler="CreateOrEdit">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="livreModalLabel">Ajouter / Modifier un livre</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" asp-for="Livre.Id" id="LivreId" />
-
-                    <div class="mb-3">
-                        <label asp-for="Livre.Titre" class="form-label"></label>
-                        <input asp-for="Livre.Titre" class="form-control" />
-                        <span asp-validation-for="Livre.Titre" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Livre.AuteurId" class="form-label"></label>
-                        <select asp-for="Livre.AuteurId" class="form-control" asp-items="Model.AuteursSelectList">
-                            <option value="">-- Sélectionner un auteur --</option>
-                        </select>
-                        <span asp-validation-for="Livre.AuteurId" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Livre.ISBN" class="form-label"></label>
-                        <input asp-for="Livre.ISBN" class="form-control" />
-                        <span asp-validation-for="Livre.ISBN" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Livre.MaisonEdition" class="form-label"></label>
-                        <input asp-for="Livre.MaisonEdition" class="form-control" />
-                        <span asp-validation-for="Livre.MaisonEdition" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Livre.AnneePublication" class="form-label"></label>
-                        <input asp-for="Livre.AnneePublication" class="form-control" type="number" />
-                        <span asp-validation-for="Livre.AnneePublication" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Livre.NombrePages" class="form-label"></label>
-                        <input asp-for="Livre.NombrePages" class="form-control" type="number" />
-                        <span asp-validation-for="Livre.NombrePages" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Livre.Langue" class="form-label"></label>
-                        <input asp-for="Livre.Langue" class="form-control" />
-                        <span asp-validation-for="Livre.Langue" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Livre.Stock" class="form-label"></label>
-                        <input asp-for="Livre.Stock" class="form-control" type="number" />
-                        <span asp-validation-for="Livre.Stock" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Enregistrer</button>
-                </div>
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h2 mb-0">
+                    <i class="bi bi-book me-2"></i>Gestion des Livres
+                </h1>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#livreModal" onclick="openModal()">
+                    <i class="bi bi-plus-circle me-2"></i>Nouveau Livre
+                </button>
             </div>
-        </form>
+        </div>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Titre</th>
+                            <th>Auteur</th>
+                            <th>ISBN</th>
+                            <th>Maison d'édition</th>
+                            <th>Année</th>
+                            <th>Stock</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Livres)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-book text-primary me-2"></i>
+                                        <span>@item.Titre</span>
+                                    </div>
+                                </td>
+                                <td>@item.Auteur?.Nom</td>
+                                <td>@item.ISBN</td>
+                                <td>@item.MaisonEdition</td>
+                                <td>@item.AnneePublication</td>
+                                <td>
+                                    <span class="badge bg-@(item.Stock > 0 ? "success" : "danger")">
+                                        @item.Stock
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-primary edit-btn" 
+                                                data-id="@item.Id"
+                                                data-titre='@Html.Raw(Json.Serialize(item.Titre))'
+                                                data-isbn='@Html.Raw(Json.Serialize(item.ISBN))'
+                                                data-maison-edition='@Html.Raw(Json.Serialize(item.MaisonEdition))'
+                                                data-annee-publication="@item.AnneePublication"
+                                                data-nombre-pages="@item.NombrePages"
+                                                data-langue='@Html.Raw(Json.Serialize(item.Langue))'
+                                                data-stock="@item.Stock"
+                                                data-auteur-id="@item.AuteurId">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <a href="@Url.Page("./Details", new { id = item.Id })" class="btn btn-sm btn-outline-info">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete(@item.Id, '@Html.Raw(Json.Serialize(item.Titre))')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
-<partial name="_ValidationScriptsPartial" />
+<!-- Modal pour Ajouter/Modifier -->
+<div class="modal fade" id="livreModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="post">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="livreModalLabel">
+                        <i class="bi bi-book me-2"></i>Ajouter un livre
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="Id" name="Id" value="0" />
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="Titre" class="form-label">Titre</label>
+                            <input type="text" class="form-control" id="Titre" name="Titre" required />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="Titre"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="AuteurId" class="form-label">Auteur</label>
+                            <select class="form-select" id="AuteurId" name="AuteurId" required>
+                                <option value="">-- Sélectionner un auteur --</option>
+                                @foreach (var auteur in Model.Auteurs)
+                                {
+                                    <option value="@auteur.Id">@auteur.Nom</option>
+                                }
+                            </select>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="AuteurId"></span>
+                        </div>
 
-<script>
-    function openModal() {
-        clearForm();
-        var myModal = new bootstrap.Modal(document.getElementById('livreModal'));
-        myModal.show();
-    }
+                        <div class="col-md-6">
+                            <label for="ISBN" class="form-label">ISBN</label>
+                            <input type="text" class="form-control" id="ISBN" name="ISBN" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="MaisonEdition" class="form-label">Maison d'édition</label>
+                            <input type="text" class="form-control" id="MaisonEdition" name="MaisonEdition" />
+                        </div>
 
-    function editLivre(id, titre, auteurId, isbn, maisonEdition, anneePublication, nombrePages, langue, stock) {
-        clearForm();
+                        <div class="col-md-6">
+                            <label for="AnneePublication" class="form-label">Année de publication</label>
+                            <input type="number" class="form-control" id="AnneePublication" name="AnneePublication" required min="1000" max="9999" />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="AnneePublication"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="NombrePages" class="form-label">Nombre de pages</label>
+                            <input type="number" class="form-control" id="NombrePages" name="NombrePages" required min="1" />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="NombrePages"></span>
+                        </div>
 
-        document.getElementById('LivreId').value = id;
-        document.getElementById('Livre_Titre').value = titre;
-        document.getElementById('Livre_AuteurId').value = auteurId;
-        document.getElementById('Livre_ISBN').value = isbn;
-        document.getElementById('Livre_MaisonEdition').value = maisonEdition;
-        document.getElementById('Livre_AnneePublication').value = anneePublication;
-        document.getElementById('Livre_NombrePages').value = nombrePages;
-        document.getElementById('Livre_Langue').value = langue;
-        document.getElementById('Livre_Stock').value = stock;
+                        <div class="col-md-6">
+                            <label for="Langue" class="form-label">Langue</label>
+                            <input type="text" class="form-control" id="Langue" name="Langue" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="Stock" class="form-label">Stock</label>
+                            <input type="number" class="form-control" id="Stock" name="Stock" required min="0" />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="Stock"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-2"></i>Annuler
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-2"></i>Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
-        var myModal = new bootstrap.Modal(document.getElementById('livreModal'));
-        myModal.show();
-    }
+<!-- Modal de confirmation de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Confirmer la suppression
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer le livre "<span id="deleteItemTitle" class="fw-bold"></span>" ?</p>
+                <p class="text-danger mb-0">
+                    <i class="bi bi-exclamation-circle me-2"></i>Cette action est irréversible.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>Annuler
+                </button>
+                <form method="post" asp-page-handler="Delete">
+                    <input type="hidden" id="deleteId" name="id" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-2"></i>Supprimer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-    function clearForm() {
-        document.getElementById('LivreId').value = 0;
-        document.getElementById('Livre_Titre').value = '';
-        document.getElementById('Livre_AuteurId').value = ''; // Clear selected option
-        document.getElementById('Livre_ISBN').value = '';
-        document.getElementById('Livre_MaisonEdition').value = '';
-        document.getElementById('Livre_AnneePublication').value = '';
-        document.getElementById('Livre_NombrePages').value = '';
-        document.getElementById('Livre_Langue').value = '';
-        document.getElementById('Livre_Stock').value = '';
-    }
-</script>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function openModal() {
+            clearForm();
+            var myModal = new bootstrap.Modal(document.getElementById('livreModal'));
+            myModal.show();
+        }
+
+        function editLivre(id, titre, auteurId, isbn, maisonEdition, anneePublication, nombrePages, langue, stock) {
+            clearForm();
+
+            document.getElementById('Id').value = id;
+            document.getElementById('Titre').value = titre;
+            document.getElementById('AuteurId').value = auteurId;
+            document.getElementById('ISBN').value = isbn;
+            document.getElementById('MaisonEdition').value = maisonEdition;
+            document.getElementById('AnneePublication').value = anneePublication;
+            document.getElementById('NombrePages').value = nombrePages;
+            document.getElementById('Langue').value = langue;
+            document.getElementById('Stock').value = stock;
+
+            var myModal = new bootstrap.Modal(document.getElementById('livreModal'));
+            myModal.show();
+        }
+
+        function clearForm() {
+            document.getElementById('Id').value = 0;
+            document.getElementById('Titre').value = '';
+            document.getElementById('AuteurId').value = ''; // Clear selected option
+            document.getElementById('ISBN').value = '';
+            document.getElementById('MaisonEdition').value = '';
+            document.getElementById('AnneePublication').value = '';
+            document.getElementById('NombrePages').value = '';
+            document.getElementById('Langue').value = '';
+            document.getElementById('Stock').value = '';
+        }
+
+        function confirmDelete(id, titre) {
+            document.getElementById('deleteId').value = id;
+            document.getElementById('deleteItemTitle').innerText = titre;
+            var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            deleteModal.show();
+        }
+    </script>
+}
