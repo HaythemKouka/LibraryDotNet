@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using LibrairieReservation.Models;
 
 namespace LibrairieReservation.Data
@@ -11,6 +11,8 @@ namespace LibrairieReservation.Data
         public DbSet<Livre> Livres { get; set; }
         public DbSet<Utilisateur> Utilisateurs { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<Auteur> Auteurs { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -38,6 +40,10 @@ namespace LibrairieReservation.Data
                 .HasOne(r => r.Utilisateur)
                 .WithMany(u => u.Reservations)
                 .HasForeignKey(r => r.UtilisateurId);
+
+            modelBuilder.Entity<Auteur>()
+            .Property(a => a.Id)
+            .UseSerialColumn(); // ← cette méthode est propre à Npgsql
         }
 
     }
