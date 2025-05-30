@@ -103,7 +103,7 @@ namespace LibrairieReservation.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl = Url.Content("~/Index"); // ou "~/Home/Index" si MVC
+            returnUrl = Url.Content("~/api/Livres"); // ou "~/Home/Index" si MVC
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 

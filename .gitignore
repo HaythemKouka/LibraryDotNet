@@ -1,0 +1,53 @@
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# VS Code settings
+.vscode/
+
+# Visual Studio files
+.vs/
+*.psess
+*.vsp
+*.vsidx
+
+# Backup & crash files
+*.log
+*.bak
+*.tmp
+
+# .gitignore
+bin/
+obj/
+*.pdb
+*.exe
+*.dll
+*.cache
+*.json
+
+# Source control folders
+$tf/
+
+# NuGet
+*.nupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+
+# Rider
+.idea/
+
+# Dotnet-specific
+*.dbmdl
+*.pdb
+
+# Others
+TestResults/
+*.cache
+*.DS_Store

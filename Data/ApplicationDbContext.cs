@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using LibrairieReservation.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
@@ -12,6 +12,8 @@ namespace LibrairieReservation.Data
         public DbSet<Livre> Livres { get; set; }
         public DbSet<Utilisateur> Utilisateurs { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<Auteur> Auteurs { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -19,16 +21,14 @@ namespace LibrairieReservation.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Livre>()
-                .Property(l => l.Id)
-                .UseSerialColumn();
+              .HasKey(l => l.Id); // EF va générer un serial automatiquement pour PostgreSQL 9.3
+
 
             modelBuilder.Entity<Utilisateur>()
-                .Property(u => u.Id)
-                .UseSerialColumn();
+                .HasKey(l => l.Id);
 
             modelBuilder.Entity<Reservation>()
-                .Property(r => r.Id)
-                .UseSerialColumn();
+                .HasKey(l => l.Id);
 
             modelBuilder.Entity<Reservation>()
                 .HasOne(r => r.Livre)
@@ -39,6 +39,9 @@ namespace LibrairieReservation.Data
                 .HasOne(r => r.Utilisateur)
                 .WithMany(u => u.Reservations)
                 .HasForeignKey(r => r.UtilisateurId);
+
+            modelBuilder.Entity<Auteur>()
+             .HasKey(l => l.Id);  // ← cette méthode est propre à Npgsql
         }
 
     }

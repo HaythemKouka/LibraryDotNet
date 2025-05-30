@@ -1,0 +1,186 @@
+﻿@page
+@model LibrairieReservation.Pages.Livres.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<h2 style="background-color: #f8f9fa; color: #343a40; font-weight: bold; padding: 15px; border-left: 5px solid #0d6efd; border-bottom: 2px solid #dee2e6; border-radius: 4px;">
+    📚 Gestion des Livres
+</h2>
+
+@if (!string.IsNullOrEmpty(Model.MessageErreur))
+{
+    <div class="alert alert-danger" style="margin-top: 15px;">@Model.MessageErreur</div>
+}
+@if (!string.IsNullOrEmpty(Model.MessageSucces))
+{
+    <div class="alert alert-success" style="margin-top: 15px;">@Model.MessageSucces</div>
+}
+
+<div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#livreModal" onclick="openModal()" style="font-weight: bold;">
+        ➕ Ajouter un livre
+    </button>
+</div>
+
+
+<table class="table table-bordered table-striped" style="background-color: #ffffff; border-radius: 6px; overflow: hidden;">
+    <thead style="background-color: #0d6efd; color: white;">
+        <tr>
+            <th style="text-align: center;">Titre</th>
+            <th style="text-align: center;">Auteur</th>
+            <th style="text-align: center;">ISBN</th>
+            <th style="text-align: center;">Maison d'édition</th>
+            <th style="text-align: center;">Année de publication</th>
+            <th style="text-align: center;">Nombre de pages</th>
+            <th style="text-align: center;">Langue</th>
+            <th style="text-align: center;">Stock</th>
+            <th style="text-align: center;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var livre in Model.Livres)
+        {
+            <tr>
+                <td>@livre.Titre</td>
+                <td>@livre.Auteur.Nom</td>
+                <td>@(string.IsNullOrEmpty(livre.ISBN) ? "-" : livre.ISBN)</td>
+                <td>@(string.IsNullOrEmpty(livre.MaisonEdition) ? "-" : livre.MaisonEdition)</td>
+                <td>@livre.AnneePublication</td>
+                <td>@livre.NombrePages</td>
+                <td>@(string.IsNullOrEmpty(livre.Langue) ? "-" : livre.Langue)</td>
+                <td>@livre.Stock</td>
+                <td style="text-align: center;">
+                    <button class="btn btn-sm btn-info me-1" style="color: white;"
+                            onclick="editLivre(@livre.Id,
+                                                '@livre.Titre.Replace("'", "\\'")',
+                                                @livre.AuteurId,
+                                                '@(livre.ISBN?.Replace("'", "\\'") ?? "")',
+                                                '@(livre.MaisonEdition?.Replace("'", "\\'") ?? "")',
+                                                @livre.AnneePublication,
+                                                @livre.NombrePages,
+                                                '@(livre.Langue?.Replace("'", "\\'") ?? "")',
+                                                @livre.Stock)">
+                        ✏️ Modifier
+                    </button>
+                    <form method="post" asp-page-handler="Delete" asp-route-id="@livre.Id" style="display:inline"
+                          onsubmit="return confirm('Voulez-vous vraiment supprimer ce livre ?');">
+                        <button type="submit" class="btn btn-sm btn-danger">🗑️ Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="modal fade" id="livreModal" tabindex="-1" aria-labelledby="livreModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form method="post" asp-page-handler="CreateOrEdit">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #0d6efd; color: white;">
+                    <h5 class="modal-title" id="livreModalLabel">Ajouter / Modifier un livre</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body" style="background-color: #f8f9fa;">
+                    <input type="hidden" asp-for="Livre.Id" id="LivreId" />
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Livre.Titre" class="form-label"></label>
+                            <input asp-for="Livre.Titre" class="form-control" />
+                            <span asp-validation-for="Livre.Titre" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Livre.AuteurId" class="form-label"></label>
+                            <select asp-for="Livre.AuteurId" class="form-control" asp-items="Model.AuteursSelectList">
+                                <option value="">-- Sélectionner un auteur --</option>
+                            </select>
+                            <span asp-validation-for="Livre.AuteurId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Livre.ISBN" class="form-label"></label>
+                            <input asp-for="Livre.ISBN" class="form-control" />
+                            <span asp-validation-for="Livre.ISBN" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Livre.MaisonEdition" class="form-label"></label>
+                            <input asp-for="Livre.MaisonEdition" class="form-control" />
+                            <span asp-validation-for="Livre.MaisonEdition" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Livre.AnneePublication" class="form-label"></label>
+                            <input asp-for="Livre.AnneePublication" class="form-control" type="number" />
+                            <span asp-validation-for="Livre.AnneePublication" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Livre.NombrePages" class="form-label"></label>
+                            <input asp-for="Livre.NombrePages" class="form-control" type="number" />
+                            <span asp-validation-for="Livre.NombrePages" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Livre.Langue" class="form-label"></label>
+                            <input asp-for="Livre.Langue" class="form-control" />
+                            <span asp-validation-for="Livre.Langue" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Livre.Stock" class="form-label"></label>
+                            <input asp-for="Livre.Stock" class="form-control" type="number" />
+                            <span asp-validation-for="Livre.Stock" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="background-color: #f1f1f1;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<partial name="_ValidationScriptsPartial" />
+
+<script>
+    function openModal() {
+        clearForm();
+        var myModal = new bootstrap.Modal(document.getElementById('livreModal'));
+        myModal.show();
+    }
+
+    function editLivre(id, titre, auteurId, isbn, maisonEdition, anneePublication, nombrePages, langue, stock) {
+        clearForm();
+
+        document.getElementById('LivreId').value = id;
+        document.getElementById('Livre_Titre').value = titre;
+        document.getElementById('Livre_AuteurId').value = auteurId;
+        document.getElementById('Livre_ISBN').value = isbn;
+        document.getElementById('Livre_MaisonEdition').value = maisonEdition;
+        document.getElementById('Livre_AnneePublication').value = anneePublication;
+        document.getElementById('Livre_NombrePages').value = nombrePages;
+        document.getElementById('Livre_Langue').value = langue;
+        document.getElementById('Livre_Stock').value = stock;
+
+        var myModal = new bootstrap.Modal(document.getElementById('livreModal'));
+        myModal.show();
+    }
+
+    function clearForm() {
+        document.getElementById('LivreId').value = 0;
+        document.getElementById('Livre_Titre').value = '';
+        document.getElementById('Livre_AuteurId').value = '';
+        document.getElementById('Livre_ISBN').value = '';
+        document.getElementById('Livre_MaisonEdition').value = '';
+        document.getElementById('Livre_AnneePublication').value = '';
+        document.getElementById('Livre_NombrePages').value = '';
+        document.getElementById('Livre_Langue').value = '';
+        document.getElementById('Livre_Stock').value = '';
+    }
+</script>
