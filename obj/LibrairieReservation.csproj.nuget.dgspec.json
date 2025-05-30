@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\YESS2\\source\\repos\\LibrairieReservation\\LibrairieReservation.csproj": {}
+    "C:\\Users\\computer house 41\\Desktop\\tek-up\\dotnet\\LibraryDotNet\\LibrairieReservation.csproj": {}
   },
   "projects": {
-    "C:\\Users\\YESS2\\source\\repos\\LibrairieReservation\\LibrairieReservation.csproj": {
+    "C:\\Users\\computer house 41\\Desktop\\tek-up\\dotnet\\LibraryDotNet\\LibrairieReservation.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\YESS2\\source\\repos\\LibrairieReservation\\LibrairieReservation.csproj",
+        "projectUniqueName": "C:\\Users\\computer house 41\\Desktop\\tek-up\\dotnet\\LibraryDotNet\\LibrairieReservation.csproj",
         "projectName": "LibrairieReservation",
-        "projectPath": "C:\\Users\\YESS2\\source\\repos\\LibrairieReservation\\LibrairieReservation.csproj",
-        "packagesPath": "C:\\Users\\YESS2\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\YESS2\\source\\repos\\LibrairieReservation\\obj\\",
+        "projectPath": "C:\\Users\\computer house 41\\Desktop\\tek-up\\dotnet\\LibraryDotNet\\LibrairieReservation.csproj",
+        "packagesPath": "C:\\Users\\computer house 41\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\computer house 41\\Desktop\\tek-up\\dotnet\\LibraryDotNet\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\YESS2\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\computer house 41\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -50,6 +51,18 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[9.0.5, )"
+            },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.5, )"
+            },
+            "Microsoft.AspNetCore.Identity.UI": {
+              "target": "Package",
+              "version": "[9.0.5, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[9.0.4, )"
@@ -71,6 +84,16 @@
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
               "version": "[9.0.5, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.5, )"
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[9.0.0, )"
             },
             "MySql.EntityFrameworkCore": {
               "target": "Package",
