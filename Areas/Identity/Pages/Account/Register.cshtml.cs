@@ -141,7 +141,8 @@ namespace LibrairieReservation.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        return LocalRedirect("/Livre"); // Redirige directement vers la page des livres
+
                     }
                 }
                 foreach (var error in result.Errors)
