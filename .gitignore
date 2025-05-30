@@ -22,6 +22,15 @@ obj/
 *.bak
 *.tmp
 
+# .gitignore
+bin/
+obj/
+*.pdb
+*.exe
+*.dll
+*.cache
+*.json
+
 # Source control folders
 $tf/
 

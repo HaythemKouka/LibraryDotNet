@@ -3,6 +3,7 @@ using System;
 using LibrairieReservation.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LibrairieReservation.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250527225923_AddIdentity")]
+    partial class AddIdentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,54 +89,17 @@ namespace LibrairieReservation.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("LibrairieReservation.Models.Auteur", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Biographie")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Nationalite")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Nom")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Auteurs");
-                });
-
             modelBuilder.Entity("LibrairieReservation.Models.Livre", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AnneePublication")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("AuteurId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ISBN")
+                    b.Property<string>("Auteur")
+                        .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<string>("Langue")
-                        .HasColumnType("text");
-
-                    b.Property<string>("MaisonEdition")
-                        .HasColumnType("text");
-
-                    b.Property<int>("NombrePages")
-                        .HasColumnType("integer");
 
                     b.Property<int>("Stock")
                         .HasColumnType("integer");
@@ -144,8 +110,6 @@ namespace LibrairieReservation.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuteurId");
-
                     b.ToTable("Livres");
                 });
 
@@ -155,7 +119,7 @@ namespace LibrairieReservation.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("DateReservation")
                         .HasColumnType("timestamp with time zone");
@@ -181,7 +145,7 @@ namespace LibrairieReservation.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -336,17 +300,6 @@ namespace LibrairieReservation.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("LibrairieReservation.Models.Livre", b =>
-                {
-                    b.HasOne("LibrairieReservation.Models.Auteur", "Auteur")
-                        .WithMany("Livres")
-                        .HasForeignKey("AuteurId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Auteur");
-                });
-
             modelBuilder.Entity("LibrairieReservation.Models.Reservation", b =>
                 {
                     b.HasOne("LibrairieReservation.Models.Livre", "Livre")
@@ -415,11 +368,6 @@ namespace LibrairieReservation.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("LibrairieReservation.Models.Auteur", b =>
-                {
-                    b.Navigation("Livres");
                 });
 
             modelBuilder.Entity("LibrairieReservation.Models.Livre", b =>
